@@ -53,7 +53,32 @@ class Wechat{
     protected static $chooseWXPayConfig = false;
     # 红包实例
     protected static $cash = false;
+    /**
+     * 微信的配置
+     * @var array
+     */
+    protected static $config = [];
 
+    /**
+     * 获取配置
+     */
+    protected static function get_config($type=null,$name=null)
+    {
+        if($name == null){
+            return self::$config;
+        }else{
+            return self::$config[$name];
+        }
+    }
+
+    /**
+     * 设置配置
+     * @param $config
+     */
+    protected static function set_config($config)
+    {
+        self::$config;
+    }
     /**
      * 微信APP支付
      * @param $pay_order_num 支付订单号
@@ -64,9 +89,9 @@ class Wechat{
     public static function app_pay($pay_order_num,$order_name,$order_price){
         # 初始化微信统一下单SDK(Appid,商户平台id,商户秘钥）参数来自于微信开放平台
         $unifiedorder = new Unifiedorder(
-            Config::get('wechat','open_appid'),
-            Config::get('wechat','open_mchid'),
-            Config::get('wechat','openid_pay_key'));
+            self::get_config('wechat','open_appid'),
+            self::get_config('wechat','open_mchid'),
+            self::get_config('wechat','openid_pay_key'));
         # 设置商品标题
         $unifiedorder->set('body',          $order_name);
         # 设置商品金额
@@ -78,7 +103,7 @@ class Wechat{
         # 设置下单单号
         $unifiedorder->set('out_trade_no',  $pay_order_num);
         # 设置 购买成功回调地址
-        $unifiedorder->set('notify_url',    Config::get('wechat','notify_url'));
+        $unifiedorder->set('notify_url',    self::get_config('wechat','notify_url'));
         # 统一下单
         try {
             $response = $unifiedorder->getResponse();
@@ -117,7 +142,7 @@ class Wechat{
             self::$cacheDriver = getDriver::getDriver();
         }
         # 初始化AccessToken
-        self::$accessToken = new AccessToken(Config::get('wechat','appid'), Config::get('wechat','secret'));
+        self::$accessToken = new AccessToken(self::get_config('wechat','appid'), self::get_config('wechat','secret'));
         # 设置缓存
         self::$accessToken->setCache(self::$cacheDriver);
         # 返回字符串类型的AccessToken
@@ -242,7 +267,7 @@ class Wechat{
             return self::$user_accessToken;
         }
         # 实例化授权类
-        self::$client = new Client(Config::get('wechat','appid'), Config::get('wechat','secret'));
+        self::$client = new Client(self::get_config('wechat','appid'), self::get_config('wechat','secret'));
 
         # 指定授权成功跳转页面
         self::$client->setRedirectUri($callBack);
@@ -296,9 +321,9 @@ class Wechat{
     public static function Unifiedorder($data = []){
         # 初始化下单接口
         self::$unifiedorder = new Unifiedorder(
-            Config::get('wechat','appid'),
-            Config::get('wechat','mchid'),
-            Config::get('wechat','pay_key'));
+            self::get_config('wechat','appid'),
+            self::get_config('wechat','mchid'),
+            self::get_config('wechat','pay_key'));
         # 循环设置订单信息
         foreach ($data as $key => $value) {
             # 设置订单内容
@@ -370,7 +395,7 @@ class Wechat{
             return false;
         }
         # 初始化红包类
-        self::$cash = new Cash(Config::get('wechat','appid'), Config::get('wechat','mch_id'), C('wechat','key'));
+        self::$cash = new Cash(self::get_config('wechat','appid'), self::get_config('wechat','mch_id'), C('wechat','key'));
 
         # 现金红包必需设置证书
         self::$cash->setSSLCert($cert,$sslKey);
@@ -509,9 +534,9 @@ class Wechat{
         }
         # 初始化企业转账类
         $transfers = new Transfers(
-            Config::get('wechat','appid'),
-            Config::get('wechat','mch_id'),
-            Config::get('wechat','key'));
+            self::get_config('wechat','appid'),
+            self::get_config('wechat','mch_id'),
+            self::get_config('wechat','key'));
 
         # 企业转账必需设置证书
         $transfers->setSSLCert($cert,$sslKey);
@@ -646,7 +671,7 @@ class Wechat{
         $stringA = implode("&", $newArr);
         # 拼接key
         # key是在商户平台API安全里自己设置的
-        $stringSignTemp = $stringA."&key=".Config::get('wechat','openid_pay_key');
+        $stringSignTemp = $stringA."&key=".self::get_config('wechat','openid_pay_key');
 
         # 将字符串进行MD5加密
         $stringSignTemp = MD5($stringSignTemp);
