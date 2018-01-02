@@ -77,7 +77,7 @@ class Wechat{
      */
     public static function set_config($config)
     {
-        self::$config;
+        self::$config = $config;
     }
     /**
      * 微信APP支付
