@@ -75,7 +75,7 @@ class Wechat{
      * 设置配置
      * @param $config
      */
-    protected static function set_config($config)
+    public static function set_config($config)
     {
         self::$config;
     }
