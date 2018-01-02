@@ -139,7 +139,7 @@ class Wechat{
     public static function get_access_token(){
         if(self::$cacheDriver==false){
             # 获取缓存驱动
-            self::$cacheDriver = getDriver::getDriver();
+            self::$cacheDriver = new \Doctrine\Common\Cache\FilesystemCache(WECHAT_CACHE_PATH);;
         }
         # 初始化AccessToken
         self::$accessToken = new AccessToken(self::get_config('wechat','appid'), self::get_config('wechat','secret'));
