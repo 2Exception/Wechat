@@ -86,7 +86,7 @@ class Jsapi
     /**
      * 获取配置文件
      */
-    public function getConfig($asArray = false)
+    public function getConfig($asArray = false,$url = '')
     {
         $ticket = new Ticket($this->accessToken);
 
@@ -96,7 +96,7 @@ class Jsapi
 
         $options = array(
             'jsapi_ticket'  => $ticket->getTicketString(),
-            'timestamp'     => Util::getTimestamp(),
+            'timestamp'     => ($url==='')?Util::getTimestamp():$url,
             'url'           => (isset($_POST['url']) && $_POST['url']!='') ? $_POST['url']: Util::getCurrentUrl(),
             'noncestr'      => Util::getRandomString(),
         );

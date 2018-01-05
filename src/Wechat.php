@@ -175,22 +175,22 @@ class Wechat{
             return self::$jsapi;
         }
     }
-
     /**
      * 获取微信 JSAPI 配置
-     * @param array $api JSAPI 列表
+     * @param array $api 列表
      * @param bool $is_array 是否返回
      * @param bool $debug 是否为调试模式
-     * @return mixed 可为数组 可为 字符串
+     * @param string $url
+     * @return mixed
      */
-    public static function get_jsapi_config($api=[],$is_array=false,$debug=false){
+    public static function get_jsapi_config($api=[],$is_array=false,$debug=false,$url = ''){
         # 判断是否已经获取过JSAPI
         if(self::$jsapi==false){
             # 获取accessToken
             self::get_jsapi($api,$debug);
         }
         # 返回JSAPI json字符串
-        return self::$jsapi->getConfig(($is_array==true)?true:false);
+        return self::$jsapi->getConfig(($is_array==true)?true:false,$url);
     }
 
     /**
