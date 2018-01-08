@@ -257,10 +257,13 @@ class Wechat{
     }
     /**
      * 获取用户access_token
-     * @param $callBack 回调地址
-     * @return 返回用户的access_token
+     * @param $callBack
+     * @param $code
+     * @param $state
+     * @return bool|OAuth\AccessToken
+     * @throws \Exception
      */
-    public static function get_Web_user_Access_Token($callBack){
+    public static function get_Web_user_Access_Token($callBack,$code,$state){
         # 判断是否已经生成过了
         if(self::$user_accessToken != false){
             # 直接返回
@@ -276,11 +279,11 @@ class Wechat{
         self::$client->setScope('snsapi_userinfo');
 
         # 判断是否为微信的回调
-        if(empty($_GET['code']) && empty($_GET['state'])){
-            Http::redirect(self::$client->getAuthorizeUrl());
+        if(empty($code) && empty($state)){
+            Response::getInstance(self::$client->getAuthorizeUrl()) -> redirect();
         }
         # 获取用户AccessToken
-        self::$user_accessToken = self::$client->getAccessToken($_GET['code']);
+        self::$user_accessToken = self::$client->getAccessToken($code);
         # 返回用户授权(可toArray())
         return self::$user_accessToken;
     }
@@ -289,22 +292,17 @@ class Wechat{
      * @param $callBack 回调地址
      * @return bool 返回用户的信息
      */
-    public static function get_user_info($callBack){
-        if(!isset($_GET['code'])){
-            $_GET['code'] = '';
-        }
-        if(!isset($_GET['state'])){
-            $_GET['state'] = '';
-        }
+    public static function get_user_info($callBack,$code = null,$state = null){
+        $_GET['code'] = $code;
+        $_GET['state'] = $state;
         if(self::$user_accessToken==false || (empty($_GET['code']) && empty($_GET['state'])) ){
-            self::get_Web_user_Access_Token($callBack);
+            self::get_Web_user_Access_Token($callBack,$code,$state);
         }
         # 判断accessToken是否有效
         if(!self::$user_accessToken->isValid()){
             # 刷新accessToken
             self::$user_accessToken->refresh();
         }
-
         # 获取用户信息
         self::$userinfo = self::$user_accessToken->getUser()->toArray();
         # 过滤微信特殊表情符号(不过滤html)
