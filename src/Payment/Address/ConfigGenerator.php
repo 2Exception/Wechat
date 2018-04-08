@@ -35,12 +35,15 @@ class ConfigGenerator
 
     /**
      * 获取配置
+     * @param bool $asArray
+     * @param null $url
+     * @return array|bool|float|int|string
      */
-    public function getConfig($asArray = false)
+    public function getConfig($asArray = false,$url = null)
     {
         $options = array(
             'appid'         => $this->accessToken->getAppid(),
-            'url'           => Util::getCurrentUrl(),
+            'url'           => $url===null?Util::getCurrentUrl():$url,
             'timestamp'     => Util::getTimestamp(),
             'noncestr'      => Util::getRandomString(),
             'accesstoken'   => $this->accessToken['access_token']
