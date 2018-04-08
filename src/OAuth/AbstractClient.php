@@ -100,6 +100,10 @@ abstract class AbstractClient
 
     /**
      * 通过 code 换取 AccessToken
+     * @param $code
+     * @param null $state
+     * @return AccessToken
+     * @throws \Exception
      */
     public function getAccessToken($code, $state = null)
     {
@@ -109,9 +113,9 @@ abstract class AbstractClient
 
         // http://www.twobotechnologies.com/blog/2014/02/importance-of-state-in-oauth2.html
 //        $state = $state ?: $_GET['state'];
-        if (!$this->stateManager->isValid($state)) {
-            throw new \Exception(sprintf('Invalid Authentication State "%s"', $state));
-        }
+//        if (!$this->stateManager->isValid($state)) {
+//            throw new \Exception(sprintf('Invalid Authentication State "%s"', $state));
+//        }
 
         $query = array(
             'appid'         => $this->appid,
