@@ -128,9 +128,9 @@ abstract class AbstractClient
             ->withQuery($query)
             ->send();
 
-        if( $response['errcode'] != 0 ) {
-            throw new \Exception($response['errmsg'], $response['errcode']);
-        }
+//        if( $response['errcode'] != 0 ) {
+//            throw new \Exception($response['errmsg'], $response['errcode']);
+//        }
 
         return new AccessToken($this->appid, $response->toArray());
     }
